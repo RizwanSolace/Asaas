@@ -197,15 +197,57 @@ const jobItems: Listing[] = [
   },
 ];
 
+const tabItems: { label: string; icon: IconComponent; target: Section }[] = [
+  { label: 'Home', icon: Home, target: 'Home' },
+  { label: 'Marketplace', icon: Store, target: 'Marketplace' },
+  { label: 'Properties', icon: Building2, target: 'Properties' },
+  { label: 'Jobs', icon: BriefcaseBusiness, target: 'Jobs' },
+  { label: 'Profile', icon: UserRound, target: 'Profile' },
+];
+
 function App() {
+  const [activeTab, setActiveTab] = useState<Section>('Home');
+
+  const renderScreen = () => {
+    switch (activeTab) {
+      case 'Marketplace':
+        return <MarketplaceScreen />;
+      case 'Properties':
+        return <PropertiesScreen />;
+      case 'Jobs':
+        return <JobsScreen />;
+      case 'Profile':
+        return <ProfileScreen />;
+      default:
+        return <HomeScreen />;
+    }
+  };
+
   return (
-   
-      <View style={styles.appStage}>
-        <View style={styles.phoneShell}>
-          <HomeScreen />
-        </View>
+    <View style={styles.appStage}>
+      <View style={styles.phoneShell}>
+        <View style={styles.appBody}>{renderScreen()}</View>
+        <BottomTabBar activeTab={activeTab} onChange={setActiveTab} />
       </View>
-  
+    </View>
+  );
+}
+
+function BottomTabBar({ activeTab, onChange }: { activeTab: Section; onChange: (tab: Section) => void }) {
+  return (
+    <View testID="bottom-tab-bar" style={styles.tabBar}>
+      {tabItems.map(({ label, icon: Icon, target }) => {
+        const isActive = activeTab === target;
+        return (
+          <Pressable key={label} style={styles.tabBarItem} onPress={() => onChange(target)}>
+            <View style={[styles.tabIcon, isActive && styles.tabIconActive]}>
+              <Icon color={isActive ? colors.navy : '#6d7a90'} size={18} strokeWidth={2.2} />
+            </View>
+            <Text style={[styles.tabLabel, isActive && styles.tabLabelActive]}>{label}</Text>
+          </Pressable>
+        );
+      })}
+    </View>
   );
 }
 
@@ -920,7 +962,7 @@ function Notice({ message, onDismiss }: { message: string; onDismiss: () => void
 }
 
 function Screen({ children }: { children: React.ReactNode }) {
-  return <SafeAreaView edges={['top']} style={styles.screen}>{children}</SafeAreaView>;
+  return <SafeAreaView edges={['top', 'bottom']} style={styles.screen}>{children}</SafeAreaView>;
 }
 
 function Arrow({ color, size }: { color: string; size: number }) {
@@ -962,6 +1004,7 @@ const styles = StyleSheet.create({
     shadowOffset: { width: 0, height: 12 },
     elevation: 8,
   },
+  appBody: { flex: 1, overflow: 'hidden' },
   screen: { flex: 1, backgroundColor: colors.canvas },
   siteTopbar: {
     backgroundColor: '#0e1d3a',
@@ -976,6 +1019,8 @@ const styles = StyleSheet.create({
     justifyContent: 'space-between',
     gap: 10,
     paddingHorizontal: 16,
+    flexWrap: 'wrap',
+    minWidth: 0,
   },
   siteBrand: {
     color: '#f7d441',
@@ -983,6 +1028,7 @@ const styles = StyleSheet.create({
     fontWeight: '900',
     letterSpacing: -1.1,
     fontStyle: 'italic',
+    flexShrink: 1,
   },
   siteBrandSub: {
     color: '#dfe6f4',
@@ -995,8 +1041,12 @@ const styles = StyleSheet.create({
   siteNavWrap: {
     flexDirection: 'row',
     alignItems: 'center',
+    justifyContent: 'center',
+    flexWrap: 'wrap',
     gap: 15,
     marginHorizontal: 10,
+    minWidth: 0,
+    flexShrink: 1,
   },
   siteNavItem: {
     color: '#edf2ff',
@@ -1008,6 +1058,7 @@ const styles = StyleSheet.create({
     flexDirection: 'row',
     alignItems: 'center',
     gap: 8,
+    marginLeft: 'auto',
   },
   siteSearchButton: {
     width: 28,
@@ -1093,6 +1144,8 @@ const styles = StyleSheet.create({
     borderRadius: 12,
     borderWidth: 1,
     borderColor: colors.line,
+    overflow: 'hidden',
+    minWidth: 0,
   },
   categoryIcon: { width: 38, height: 38, borderRadius: 19, alignItems: 'center', justifyContent: 'center', marginBottom: 7 },
   categoryLabel: { color: colors.ink, fontSize: 9.5, fontWeight: '700', textAlign: 'center' },
@@ -1113,9 +1166,9 @@ const styles = StyleSheet.create({
   communityButtonText: { color: '#d7caff', fontSize: 10, fontWeight: '800' },
   horizontalGap: { gap: 10 },
   postCard: { width: 185, borderRadius: 13, backgroundColor: colors.card, borderWidth: 1, borderColor: colors.line, overflow: 'hidden' },
-  postArt: { height: 89, padding: 11, justifyContent: 'flex-end', overflow: 'hidden' },
-  postArtLabel: { color: '#fff', fontSize: 12, lineHeight: 16, fontWeight: '800', maxWidth: 145 },
-  postArtLine: { position: 'absolute', width: 120, height: 120, borderRadius: 60, right: -40, top: -45, borderWidth: 17, borderColor: 'rgba(255,255,255,.12)' },
+  postArt: { height: 72, padding: 9, justifyContent: 'flex-end', overflow: 'hidden', borderTopLeftRadius: 13, borderTopRightRadius: 13 },
+  postArtLabel: { color: '#fff', fontSize: 11, lineHeight: 14, fontWeight: '800', maxWidth: 140 },
+  postArtLine: { position: 'absolute', width: 100, height: 100, borderRadius: 50, right: -28, top: -24, borderWidth: 12, borderColor: 'rgba(255,255,255,.10)' },
   postBody: { padding: 9 },
   postName: { color: colors.ink, fontSize: 10, fontWeight: '800' },
   postMeta: { color: colors.muted, fontSize: 8.5, marginTop: 3 },
@@ -1138,10 +1191,28 @@ const styles = StyleSheet.create({
   eventDate: { color: colors.purple, fontSize: 8, fontWeight: '900', letterSpacing: 0.7 },
   eventTitle: { color: colors.ink, fontSize: 11, lineHeight: 15, fontWeight: '800', marginTop: 12 },
   eventCopy: { color: colors.muted, fontSize: 9, marginTop: 4 },
-  tabBar: { height: 67, paddingTop: 7, paddingBottom: 7, backgroundColor: '#fff', borderTopWidth: 1, borderTopColor: colors.line, elevation: 10 },
-  tabBarItem: { paddingHorizontal: 1 },
-  tabLabel: { fontSize: 9, fontWeight: '800', marginTop: -1 },
-  tabIcon: { width: 28, height: 25, alignItems: 'center', justifyContent: 'center', borderRadius: 9 },
+  tabBar: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    justifyContent: 'space-between',
+    height: 74,
+    paddingTop: 8,
+    paddingBottom: 12,
+    paddingHorizontal: 12,
+    backgroundColor: '#ffffff',
+    borderTopWidth: 1,
+    borderTopColor: colors.line,
+    shadowColor: '#0d1f3d',
+    shadowOpacity: 0.08,
+    shadowRadius: 12,
+    shadowOffset: { width: 0, height: -4 },
+    elevation: 10,
+    overflow: 'hidden',
+  },
+  tabBarItem: { flex: 1, alignItems: 'center', justifyContent: 'center', paddingHorizontal: 2, minWidth: 0 },
+  tabLabel: { fontSize: 8.5, fontWeight: '800', marginTop: 2, color: '#6d7a90' },
+  tabLabelActive: { color: colors.navy },
+  tabIcon: { width: 32, height: 28, alignItems: 'center', justifyContent: 'center', borderRadius: 9 },
   tabIconActive: { backgroundColor: '#fff7c7' },
   pressed: { opacity: 0.72, transform: [{ scale: 0.985 }] },
   browseToolbar: { flexDirection: 'row', alignItems: 'center', gap: 10, marginBottom: 15 },
@@ -1157,12 +1228,12 @@ const styles = StyleSheet.create({
   chipText: { color: colors.navy, fontSize: 10, fontWeight: '800' },
   chipTextActive: { color: '#fff' },
   stack: { gap: 11, marginTop: 16 },
-  listingCard: { position: 'relative', flexDirection: 'row', minHeight: 118, borderRadius: 14, backgroundColor: colors.card, borderWidth: 1, borderColor: colors.line, overflow: 'hidden' },
+  listingCard: { position: 'relative', flexDirection: 'row', minHeight: 118, borderRadius: 14, backgroundColor: colors.card, borderWidth: 1, borderColor: colors.line, overflow: 'hidden', minWidth: 0 },
   listingCardCompact: { width: 164, display: 'flex' as never, flexDirection: 'column', minHeight: 218 },
-  listingVisual: { position: 'relative', width: 130, minHeight: 118, overflow: 'hidden' },
-  listingVisualCompact: { width: '100%', height: 108, minHeight: 108 },
-  visualOrb: { position: 'absolute', width: 120, height: 120, borderRadius: 60, top: -35, right: -30, borderWidth: 12, borderColor: 'rgba(255,255,255,.12)' },
-  visualOrbSmall: { position: 'absolute', width: 54, height: 54, borderRadius: 27, bottom: -18, left: 18 },
+  listingVisual: { position: 'relative', width: 116, minHeight: 104, overflow: 'hidden', borderTopLeftRadius: 14, borderBottomLeftRadius: 14 },
+  listingVisualCompact: { width: '100%', height: 92, minHeight: 92, borderTopLeftRadius: 14, borderTopRightRadius: 14, borderBottomLeftRadius: 0 },
+  visualOrb: { position: 'absolute', width: 100, height: 100, borderRadius: 50, top: -24, right: -22, borderWidth: 10, borderColor: 'rgba(255,255,255,.10)' },
+  visualOrbSmall: { position: 'absolute', width: 48, height: 48, borderRadius: 24, bottom: -12, left: 18 },
   listingBadge: { position: 'absolute', left: 9, top: 9, paddingHorizontal: 7, paddingVertical: 4, borderRadius: 5, backgroundColor: 'rgba(9,25,51,.62)' },
   listingBadgeText: { color: '#fff', fontSize: 7, fontWeight: '900', letterSpacing: 0.6 },
   visualInitials: { position: 'absolute', right: 9, bottom: 9, color: 'rgba(255,255,255,.65)', fontSize: 10, fontWeight: '900', letterSpacing: 1 },
@@ -1198,67 +1269,75 @@ const styles = StyleSheet.create({
   notice: { position: 'absolute', left: 15, right: 15, bottom: 78, zIndex: 50, flexDirection: 'row', alignItems: 'center', gap: 9, paddingHorizontal: 13, paddingVertical: 11, borderRadius: 11, backgroundColor: colors.navySoft, shadowColor: '#101b34', shadowOpacity: 0.25, shadowRadius: 16, shadowOffset: { width: 0, height: 7 }, elevation: 6 },
   noticeText: { flex: 1, color: '#fff', fontSize: 10.5, lineHeight: 15 },
   footerShell: {
-    backgroundColor: '#0d1f3d',
-    paddingHorizontal: 18,
-    paddingTop: 20,
-    paddingBottom: 16,
-    marginTop: 8,
+    backgroundColor: '#112b4a',
+    paddingHorizontal: 12,
+    paddingTop: 10,
+    paddingBottom: 8,
+    marginTop: 2,
+    overflow: 'hidden',
+    borderTopLeftRadius: 0,
+    borderTopRightRadius: 0,
   },
   footerGrid: {
     flexDirection: 'row',
     justifyContent: 'space-between',
-    gap: 18,
+    gap: 10,
+    alignItems: 'flex-start',
   },
   footerColumn: {
     flex: 1,
-    gap: 7,
+    gap: 4,
+    minWidth: 0,
   },
   footerBrand: {
     color: '#f7d441',
-    fontSize: 26,
+    fontSize: 22,
     fontStyle: 'italic',
     fontWeight: '900',
     letterSpacing: -1,
-    marginBottom: 4,
+    marginBottom: 2,
   },
   footerHeading: {
     color: '#f9fbff',
-    fontSize: 12,
+    fontSize: 10.5,
     fontWeight: '800',
-    marginBottom: 4,
+    marginBottom: 2,
   },
   footerText: {
     color: '#c8d1e4',
-    fontSize: 9.5,
-    lineHeight: 16,
+    fontSize: 9,
+    lineHeight: 14,
   },
   footerLink: {
     color: '#dfe7f5',
-    fontSize: 9.5,
-    lineHeight: 18,
+    fontSize: 9,
+    lineHeight: 17,
   },
   subscribeRow: {
     flexDirection: 'row',
     gap: 6,
-    marginTop: 4,
+    marginTop: 2,
+    minWidth: 0,
+    alignItems: 'center',
   },
   subscribeInput: {
     flex: 1,
-    minHeight: 32,
+    minHeight: 30,
     borderRadius: 7,
     paddingHorizontal: 10,
     backgroundColor: '#eff4fb',
     color: '#1a2540',
-    fontSize: 9.5,
+    fontSize: 9,
+    minWidth: 0,
   },
   subscribeButton: {
-    minWidth: 84,
+    minWidth: 78,
     justifyContent: 'center',
     alignItems: 'center',
     borderRadius: 7,
     backgroundColor: '#f7d441',
-    paddingHorizontal: 10,
-    paddingVertical: 8,
+    paddingHorizontal: 8,
+    paddingVertical: 7,
   },
   subscribeButtonText: {
     color: '#0d1f3d',
@@ -1269,8 +1348,8 @@ const styles = StyleSheet.create({
     flexDirection: 'row',
     justifyContent: 'space-between',
     alignItems: 'center',
-    marginTop: 18,
-    paddingTop: 12,
+    marginTop: 10,
+    paddingTop: 8,
     borderTopWidth: 1,
     borderTopColor: 'rgba(255,255,255,0.12)',
   },
@@ -1280,7 +1359,7 @@ const styles = StyleSheet.create({
   },
   footerBottomText: {
     color: '#d2dae8',
-    fontSize: 8.5,
+    fontSize: 8,
   },
   modalBackdrop: { flex: 1, justifyContent: 'flex-end', backgroundColor: 'rgba(11,29,57,.48)' },
   modalScroll: { flexGrow: 1, justifyContent: 'flex-end' },

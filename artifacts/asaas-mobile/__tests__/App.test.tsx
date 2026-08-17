@@ -11,3 +11,15 @@ test('renders correctly', async () => {
     ReactTestRenderer.create(<App />);
   });
 });
+
+test('renders the bottom navigation bar', async () => {
+  let component: ReactTestRenderer.ReactTestRenderer;
+
+  await ReactTestRenderer.act(() => {
+    component = ReactTestRenderer.create(<App />);
+  });
+
+  expect(
+    component!.root.findAllByProps({ testID: 'bottom-tab-bar' }).length,
+  ).toBeGreaterThan(0);
+});
