@@ -1,5 +1,5 @@
 import { useMemo, useState, type ComponentType } from 'react';
-import { SafeAreaProvider, SafeAreaView } from 'react-native-safe-area-context';
+import {  SafeAreaView } from 'react-native-safe-area-context';
 import {
   Bell,
   BriefcaseBusiness,
@@ -199,13 +199,13 @@ const jobItems: Listing[] = [
 
 function App() {
   return (
-    <SafeAreaProvider>
+   
       <View style={styles.appStage}>
         <View style={styles.phoneShell}>
           <HomeScreen />
         </View>
       </View>
-    </SafeAreaProvider>
+  
   );
 }
 
