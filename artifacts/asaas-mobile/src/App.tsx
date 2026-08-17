@@ -371,7 +371,7 @@ function HomeScreen() {
         title="Good morning, Rami"
         caption="Your pocket hub for building better, together."
       />
-      <ScrollView contentContainerStyle={styles.scrollContent} showsVerticalScrollIndicator={false}>
+      <ScrollView style={{ flex: 1, minHeight: 0 }} contentContainerStyle={styles.scrollContent} showsVerticalScrollIndicator={false}>
         <SearchField
           value={search}
           onChangeText={setSearch}
@@ -530,7 +530,7 @@ function BrowseScreen({
   return (
     <Screen>
       <ScreenHeader title={title} caption={caption} />
-      <ScrollView contentContainerStyle={styles.scrollContent} showsVerticalScrollIndicator={false}>
+      <ScrollView style={{ flex: 1, minHeight: 0 }} contentContainerStyle={styles.scrollContent} showsVerticalScrollIndicator={false}>
         <View style={styles.browseToolbar}>
           <View style={styles.flexOne}>
             <Text style={styles.browseTitle}>
@@ -617,7 +617,7 @@ function ProfileScreen() {
   return (
     <Screen>
       <ScreenHeader title="Your profile" caption="Keep your professional presence current." />
-      <ScrollView contentContainerStyle={styles.scrollContent} showsVerticalScrollIndicator={false}>
+      <ScrollView style={{ flex: 1, minHeight: 0 }} contentContainerStyle={styles.scrollContent} showsVerticalScrollIndicator={false}>
         <View style={styles.profileHero}>
           <View style={styles.profileAvatar}>
             <Text style={styles.profileAvatarText}>RM</Text>
