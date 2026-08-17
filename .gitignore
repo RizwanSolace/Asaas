@@ -1,0 +1,34 @@
+.env
+node_modules
+# React Native
+.metro/
+.expo/
+
+# Android
+android/.gradle/
+android/build/
+android/app/build/
+android/app/.cxx/
+node_modules/
+
+artifacts/asaas-mobile/android/.gradle/
+artifacts/asaas-mobile/android/build/
+artifacts/asaas-mobile/android/app/build/
+artifacts/asaas-mobile/android/app/.cxx/
+
+*.apk
+*.aab
+
+# iOS
+ios/build/
+ios/Pods/
+
+# IDE
+.idea/
+.vscode/
+
+# Logs
+*.log
+# OS
+.DS_Store
+Thumbs.db

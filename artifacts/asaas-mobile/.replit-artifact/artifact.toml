@@ -1,0 +1,28 @@
+kind = "web"
+previewPath = "/"
+title = "Asaas Mobile"
+description = "An Expo-free React Native mobile experience for Asaas marketplace users, shared across React Native CLI for iOS and Android and React Native Web for browsers."
+version = "1.0.0"
+id = "artifacts/asaas-mobile"
+router = "path"
+
+[[services]]
+name = "web"
+paths = [ "/" ]
+localPort = 19975
+
+[services.development]
+run = "pnpm --filter @workspace/asaas-mobile run dev"
+
+[services.production]
+build = [ "pnpm", "--filter", "@workspace/asaas-mobile", "run", "build" ]
+serve = "static"
+publicDir = "artifacts/asaas-mobile/dist/public"
+
+[[services.production.rewrites]]
+from = "/*"
+to = "/index.html"
+
+[services.env]
+PORT = "19975"
+BASE_PATH = "/"
